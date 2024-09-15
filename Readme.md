@@ -53,6 +53,9 @@ The system generates the following real-time visualizations:
    - **Displays**: Extracted trend and seasonal components from the data.
    - **Features**: Shows trends and seasonal variations over time to help visualize the underlying data patterns.
 
+![Screenshot (141)](https://github.com/user-attachments/assets/9cf2841f-ef8d-459b-b45e-50a27c5a45a7)
+
+
 ## Algorithms and Rationale
 
 1. **Exponential Moving Average (EMA)**:
