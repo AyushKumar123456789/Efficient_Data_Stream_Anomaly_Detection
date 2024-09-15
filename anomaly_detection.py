@@ -46,10 +46,11 @@ class AdaptiveAnomalyDetector:
                 self.concept_drift_counter = 0
         if self.forest_fitted:
             scaled_point = self.scaler.transform([[data_point]])
+            score = -self.isolation_forest.decision_function(scaled_point)[0]
             prediction = self.isolation_forest.predict(scaled_point)
-            score = -self.isolation_forest.decision_function(scaled_point)
             return prediction == -1, score
         return False, 0
+
 
     def detect_anomaly_seasonality(self, data_point):
         if len(self.data_window) < self.season_length:
