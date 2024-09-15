@@ -5,25 +5,28 @@ from collections import deque
 from sklearn.ensemble import IsolationForest
 
 class AdaptiveAnomalyDetector:
-    def __init__(self, window_size=100, alpha=0.3, contamination=0.01, season_length=50):
+    def __init__(self, window_size=100, alpha=0.3, contamination=0.01, season_length=50, drift_detection_interval=200):
         """
         Initialize the adaptive anomaly detector with:
         - window_size: Size of sliding window for storing recent data points.
         - alpha: Smoothing factor for Exponential Moving Average (EMA).
         - contamination: The proportion of anomalies expected, used by the Isolation Forest.
         - season_length: Number of data points to account for one complete seasonal cycle.
+        - drift_detection_interval: The interval at which the model checks for concept drift and retrains if necessary.
         """
         self.window_size = window_size
         self.alpha = alpha
         self.season_length = season_length
+        self.drift_detection_interval = drift_detection_interval
 
-        # For Isolation Forest and EMA methods
+        # For Isolation Forest, EMA, and Concept Drift methods
         self.data_window = deque(maxlen=window_size)
         self.ema_window = deque(maxlen=window_size)
 
         # Isolation Forest model
         self.isolation_forest = IsolationForest(contamination=contamination)
         self.forest_fitted = False
+        self.concept_drift_counter = 0
 
     def update_ema(self, data_point):
         """
@@ -46,21 +49,27 @@ class AdaptiveAnomalyDetector:
         if len(self.ema_window) < self.window_size:
             return False  # Wait until we have enough data points
 
-        # Detect anomalies based on 3 standard deviations from EMA
-        threshold = np.std(self.ema_window) * 3
+        # Convert deque to list for slicing
+        ema_window_list = list(self.ema_window)
+
+        # Dynamically adjust the threshold for EMA based on recent data
+        threshold = np.std(ema_window_list[-self.season_length:]) * 3
         return abs(data_point - ema_value) > threshold
+
 
     def detect_anomaly_isolation_forest(self, data_point):
         """
         Isolation Forest-based anomaly detection: Detect if the point is anomalous using Isolation Forest.
         """
         self.data_window.append(data_point)
+        self.concept_drift_counter += 1
 
-        # Train Isolation Forest once we have enough data
+        # Train Isolation Forest once we have enough data or when drift interval is hit
         if len(self.data_window) == self.window_size:
-            if not self.forest_fitted:
+            if not self.forest_fitted or self.concept_drift_counter >= self.drift_detection_interval:
                 self.isolation_forest.fit(np.array(self.data_window).reshape(-1, 1))
                 self.forest_fitted = True
+                self.concept_drift_counter = 0  # Reset the drift counter
 
         if self.forest_fitted:
             prediction = self.isolation_forest.predict([[data_point]])

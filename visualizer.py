@@ -1,50 +1,3 @@
-# # visualizer.py
-
-# import matplotlib.pyplot as plt
-
-# class RealTimeVisualizer:
-#     def __init__(self):
-#         self.data_points = []
-#         self.anomalies = []
-
-#         # Set up interactive plotting
-#         plt.ion()
-#         self.fig, self.ax = plt.subplots()
-
-#     def update_plot(self, data_point, anomalies_detected):
-#         """
-#         Update the plot with the new data point and mark anomalies with different shapes.
-#         """
-#         # Store data points and mark anomalies
-#         self.data_points.append(data_point)
-
-#         if anomalies_detected:
-#             self.anomalies.append(anomalies_detected)
-#         else:
-#             self.anomalies.append(None)
-
-#         # Clear plot and redraw
-#         self.ax.clear()
-#         self.ax.plot(self.data_points, label="Data Stream")
-        
-#         # Define markers and colors for different anomaly detection methods
-#         marker_styles = {
-#                 'Z-score': {'marker': 'o', 'color': 'red'},  # Circle for Z-score anomalies
-#                 'Isolation Forest': {'marker': 's', 'color': 'blue'},  # Square for Isolation Forest anomalies
-#                 'EMA': {'marker': '^', 'color': 'green'},  # Triangle for EMA anomalies
-#         }
-        
-#         # Mark anomalies with different shapes
-#         for i, anomaly in enumerate(self.anomalies):
-#             if anomaly is not None:
-#                 # Multiple anomalies: plot different shapes for each detection method
-#                 for method in anomaly:
-#                     style = marker_styles.get(method, {'marker': 'x', 'color': 'black'})  # Default: X marker for unknown methods
-#                     self.ax.scatter(i, self.data_points[i], marker=style['marker'], color=style['color'], label=method)
-        
-#         # Adding legend and showing plot updates
-#         # self.ax.legend()
-#         plt.pause(0.01)
 # visualizer.py
 
 import matplotlib.pyplot as plt
@@ -60,10 +13,9 @@ class RealTimeVisualizer:
 
         # Define markers and colors for different anomaly detection methods
         self.marker_styles = {
-            'Z-score': {'marker': 'o', 'color': 'red'},  # Circle for Z-score anomalies
-            'Isolation Forest': {'marker': 's', 'color': 'blue'},  # Square for Isolation Forest anomalies
             'EMA': {'marker': '^', 'color': 'green'},  # Triangle for EMA anomalies
-            'Seasonal' : {'marker': '*', 'color': 'black'}
+            'Isolation Forest': {'marker': 's', 'color': 'blue'},  # Square for Isolation Forest anomalies
+            'Seasonal' : {'marker': '*', 'color': 'black'}  # Star for Seasonal anomalies
         }
         
         # Create an empty plot for legend
